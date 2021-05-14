@@ -3,6 +3,8 @@ import Helpers from '../utils/Helpers'
 
 let state = {
     userId: localStorage.getItem("user-id") || '',
+    userType: localStorage.getItem("user-type") || '', // indicates whether is a user or a bot
+    botId: localStorage.getItem("bot-id") || '',
     sessionId: localStorage.getItem("session-id") || '',
     groupId: localStorage.getItem("group-id") || '',
     task: {
@@ -14,6 +16,12 @@ let state = {
 const AccountStore = Object.assign(EventEmitter.prototype, {
     getUserId() {
         return state.userId;
+    },
+    getUserType() {
+        return state.userType;
+    },
+    getBotId() {
+        return state.botId;
     },
     getSessionId() {
         return state.sessionId;
@@ -37,6 +45,11 @@ const AccountStore = Object.assign(EventEmitter.prototype, {
     setUserId(userId) {
         state.userId = userId;
         localStorage.setItem("user-id", userId);
+    },
+
+    setUserType(type) {
+       state.userType = type;
+       localStorage.setItem("user-type", type);
     },
 
     setSessionId(sessionId) {
@@ -70,11 +83,30 @@ const AccountStore = Object.assign(EventEmitter.prototype, {
     }
 });
 
+/************   Create bot account   *********
+Bot account will be created when there's a new group. 
+Two scenarios may cause this:
+    - a new client without groupId in url
+    - a client with strange groupId in url
+For simplicity, for now, we consider the latter never
+happens. But it's a valid scenario and should be 
+handled in later phase of development.
+**********************************************/
+const _createBotAccount = function(groupId) {
+    // since user-id and group-id relies on the persistence of localStorage
+    // it make sense to just store the bot-id in the localStorage
+    // usch that the bot has the same life span as the group id 
+    localStorage.setItem("bot-id", groupId);
+}
+
+
+
 // set userId and groupId if specified by url parameter
 const urlGroupId = Helpers.getURLParameter("groupId");
 if (urlGroupId) {
     if (urlGroupId !== state.groupId) {
         AccountStore.setUserId(Helpers.generateId());
+        AccountStore.setUserType("user");
     }
     AccountStore.setSessionId(urlGroupId);
     AccountStore.setGroupId(urlGroupId);
@@ -87,11 +119,13 @@ if (urlUserId) {
 // initialize random userId, sessionId, and groupId if they are not set by localstorage or url parameter
 if (!state.userId) {
     AccountStore.setUserId(Helpers.generateId());
+    AccountStore.setUserType("user");
 }
 if (!state.sessionId) {
     const id = Helpers.generateId();
     AccountStore.setSessionId(id);
     AccountStore.setGroupId(id);
+    _createBotAccount(id);
 }
 
 export default AccountStore;

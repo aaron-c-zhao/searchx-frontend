@@ -61,10 +61,13 @@ const ChatStore = Object.assign(EventEmitter.prototype, {
     })
 });
 
+/*
+    Fetch the message list from the server.
+*/
 const _get_chat_message_list = () => {
     request
         .get(`${process.env.REACT_APP_SERVER_URL}/v1/session/${AccountStore.getGroupId()}/chat`)
-        .end((err, res) => {
+        .end((err, res) => { // typical callback pattern 
             if (err || !res.body || res.body.error) {
                 state.messageList = [];
             } else {
@@ -75,10 +78,13 @@ const _get_chat_message_list = () => {
         });
 };
 
-const _set_author = (message) => {
 
+//TODO: add conditional branch for "bot" 
+const _set_author = (message) => {
     if (message.sender === AccountStore.getUserId()) {
         message.author = "me";
+    } else if (message.sender === AccountStore.getBotId()) {
+        message.author = "bot";
     } else {
         message.author = "them";
     }

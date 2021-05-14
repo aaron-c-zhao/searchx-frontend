@@ -63,17 +63,31 @@ export default class Chat extends Component {
     };
     log(LoggerEventTypes.CHAT_MESSAGE, metaInfo);
     SessionActions.addChatMessage(message);
+    this._botEcho(message);
+  }
+ 
+  // temporate method
+  // TODO: refactor the bot relative functions into its own module
+  _botEcho(message) {
+    let botMessage = {...message};
+    botMessage.sender = AccountStore.getBotId();
+    botMessage.data.date = new Date();
+    botMessage.author = "bot"
+    SessionActions.addChatMessage(botMessage);
   }
 
 
   changeHandler() {
+    // fetch the message list
     let messageList = ChatStore.getChatMessageList();
+    // handle the message count
     let newMessagesCount;
     if (this.state.isOpen) {
       newMessagesCount = 0;
     } else {
       newMessagesCount = ChatStore.getNewMessagesCount();
     }
+    // update the React compnent and cause reendering of the component
     this.setState({
       messageList: messageList,
       newMessagesCount: newMessagesCount

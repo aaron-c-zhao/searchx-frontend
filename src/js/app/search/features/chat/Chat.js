@@ -63,7 +63,9 @@ export default class Chat extends Component {
     };
     log(LoggerEventTypes.CHAT_MESSAGE, metaInfo);
     SessionActions.addChatMessage(message);
-    this._botEcho(message);
+    if (config.interface.chatbot === true) {
+      this._botEcho(message);
+    }
   }
  
   // temporate method

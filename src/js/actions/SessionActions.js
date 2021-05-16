@@ -21,6 +21,13 @@ export default {
         })
     },
 
+    notifyBot() {
+        dispatch({
+            type: ActionTypes.NOTIFY_BOT,
+            payload:{}
+        })
+    },
+
     //// Query History
 
     getQueryHistory() {

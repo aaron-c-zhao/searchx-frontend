@@ -64,21 +64,10 @@ export default class Chat extends Component {
     log(LoggerEventTypes.CHAT_MESSAGE, metaInfo);
     SessionActions.addChatMessage(message);
     if (config.interface.chatbot === true) {
-      this._botEcho(message);
+      SessionActions.notifyBot();
     }
   }
  
-  // temporate method
-  // TODO: refactor the bot relative functions into its own module
-  _botEcho(message) {
-    let botMessage = {...message};
-    botMessage.sender = AccountStore.getBotId();
-    botMessage.data.date = new Date();
-    botMessage.author = "bot"
-    SessionActions.addChatMessage(botMessage);
-  }
-
-
   changeHandler() {
     // fetch the message list
     let messageList = ChatStore.getChatMessageList();

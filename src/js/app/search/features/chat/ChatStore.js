@@ -55,6 +55,9 @@ const ChatStore = Object.assign(EventEmitter.prototype, {
             case ActionTypes.ADD_CHAT_MESSAGE:
                 _add_message_list(action.payload.message);
                 break;
+            case ActionTypes.NOTIFY_BOT:
+                _notify_bot()
+                break;
             default:
                 break;
         }
@@ -109,6 +112,29 @@ const _add_message_list = function(message) {
 const _broadcast_change = function() {
     SyncStore.emitChatUpdate(ChatStore.getChatMessageList());
 };
+
+const _notify_bot = function() {
+    let message = "";
+    request
+        .post(`${process.env.REACT_APP_SERVER_URL}/v1/session/${AccountStore.getGroupId()}/chatbot`)
+        .send({
+            messageList: state.messageList 
+        })
+        .end((err, res) => {
+            if (err || !res.body || res.body.error) {
+                console.log("Bot failed to response.");
+                console.log(err);
+                message = "#$@!#$%$^%^%&*";
+            }
+            else {
+                message = res.body.results;
+                message.author = "bot"
+                state.messageList.push(message);
+                ChatStore.emitChange();
+                _broadcast_change();
+            }
+        });
+}
 
 
 export default ChatStore;

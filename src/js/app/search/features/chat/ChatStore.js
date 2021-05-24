@@ -114,24 +114,23 @@ const _broadcast_change = function() {
 };
 
 const _notify_bot = function() {
-    let message = "";
     request
         .post(`${process.env.REACT_APP_SERVER_URL}/v1/session/${AccountStore.getGroupId()}/chatbot`)
         .send({
-            messageList: state.messageList 
+            message: state.messageList.slice(-1)[0]
         })
         .end((err, res) => {
             if (err || !res.body || res.body.error) {
                 console.log("Bot failed to response.");
                 console.log(err);
-                message = "#$@!#$%$^%^%&*";
             }
             else {
-                message = res.body.results;
-                message.author = "bot"
-                state.messageList.push(message);
-                ChatStore.emitChange();
-                _broadcast_change();
+                let reply = res.body.results;
+                if (reply !== null) {
+                    state.messageList.push(reply);
+                    ChatStore.emitChange();
+                    _broadcast_change();
+                }
             }
         });
 }

@@ -21,10 +21,12 @@ export default {
         })
     },
 
-    notifyBot() {
+    notifyBot(message) {
         dispatch({
             type: ActionTypes.NOTIFY_BOT,
-            payload:{}
+            payload:{
+                message: message
+            }
         })
     },
 

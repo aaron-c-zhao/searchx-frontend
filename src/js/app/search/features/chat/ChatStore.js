@@ -127,6 +127,7 @@ const _notify_bot = function() {
             else {
                 let reply = res.body.results;
                 if (reply !== null) {
+                    debugger;
                     state.messageList.push(reply);
                     ChatStore.emitChange();
                     _broadcast_change();

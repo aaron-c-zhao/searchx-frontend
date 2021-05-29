@@ -67,6 +67,14 @@ export default class Chat extends Component {
       SessionActions.notifyBot(metaInfo);
     }
   }
+
+  _confirmYes() {
+    console.log("yes");
+  }
+
+  _confirmNo() {
+    console.log("no");
+  }
  
   changeHandler() {
     // fetch the message list
@@ -98,6 +106,8 @@ export default class Chat extends Component {
           imageUrl: '/img/searchx_chat_logo.png'
         }}
         onMessageWasSent={this._onMessageWasSent.bind(this)}
+        confirmYes={this._confirmYes.bind(this)}
+        confirmNo={this._confirmNo.bind(this)}
         messageList={this.state.messageList}
         newMessagesCount={this.state.newMessagesCount}
         showEmoji

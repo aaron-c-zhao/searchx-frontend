@@ -128,8 +128,25 @@ const _confirm_message = function(choice)  {
         .send({
             message: messageToBeSent
         })
-        .end(() => {});
+        .end((err, res) => {
+            _handle_bot_reply(err, res);
+        });
         
+}
+
+const _handle_bot_reply = function(err, res) {
+            if (err || !res.body || res.body.error) {
+                console.log("Bot failed to response.");
+                console.log(err);
+            }
+            else {
+                let reply = res.body.results;
+                if (reply !== null) {
+                    state.messageList.push(reply);
+                    ChatStore.emitChange();
+                    _broadcast_change();
+                }
+            }
 }
 
 const _broadcast_change = function() {
@@ -143,19 +160,7 @@ const _notify_bot = function() {
             message: state.messageList.slice(-1)[0]
         })
         .end((err, res) => {
-            if (err || !res.body || res.body.error) {
-                console.log("Bot failed to response.");
-                console.log(err);
-            }
-            else {
-                let reply = res.body.results;
-                if (reply !== null) {
-                    debugger;
-                    state.messageList.push(reply);
-                    ChatStore.emitChange();
-                    _broadcast_change();
-                }
-            }
+            _handle_bot_reply(err, res);
         });
 }
 

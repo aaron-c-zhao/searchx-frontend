@@ -21,6 +21,15 @@ export default {
         })
     },
 
+    sendConfirmMessage(choice) {
+        dispatch({
+            type: ActionTypes.SENT_CONFIRM_MESSAGE,
+            payload:{
+                choice: choice
+            }
+        })
+    },
+
     notifyBot(message) {
         dispatch({
             type: ActionTypes.NOTIFY_BOT,

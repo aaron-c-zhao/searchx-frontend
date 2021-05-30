@@ -58,6 +58,9 @@ const ChatStore = Object.assign(EventEmitter.prototype, {
             case ActionTypes.NOTIFY_BOT:
                 _notify_bot()
                 break;
+            case ActionTypes.SENT_CONFIRM_MESSAGE:
+                _confirm_message(action.payload.choice);
+                break;
             default:
                 break;
         }
@@ -108,6 +111,26 @@ const _add_message_list = function(message) {
     state.messageList.push(message);
     ChatStore.emitChange();
 };
+
+const _confirm_message = function(choice)  {
+    let choiceStr = (choice)? 'yes' : 'no';
+    let messageToBeSent = {
+        author: "me",
+        data: {
+            date: new Date(),
+            text: `@bot ${choiceStr}`
+        },
+        sender: AccountStore.getUserId(),
+        type: "text"
+    }
+    request
+        .post(`${process.env.REACT_APP_SERVER_URL}/v1/session/${AccountStore.getGroupId()}/chatbot`)
+        .send({
+            message: messageToBeSent
+        })
+        .end(() => {});
+        
+}
 
 const _broadcast_change = function() {
     SyncStore.emitChatUpdate(ChatStore.getChatMessageList());

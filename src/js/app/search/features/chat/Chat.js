@@ -69,11 +69,11 @@ export default class Chat extends Component {
   }
 
   _confirmYes() {
-    console.log("yes");
+    SessionActions.sendConfirmMessage(true);
   }
 
   _confirmNo() {
-    console.log("no");
+    SessionActions.sendConfirmMessage(false);
   }
  
   changeHandler() {

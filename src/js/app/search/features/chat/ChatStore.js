@@ -86,7 +86,6 @@ const _get_chat_message_list = () => {
 };
 
 
-//TODO: add conditional branch for "bot" 
 const _set_author = (message) => {
     if (message.sender === AccountStore.getUserId()) {
         message.author = "me";

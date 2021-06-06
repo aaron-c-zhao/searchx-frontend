@@ -17,7 +17,8 @@ export default class Chat extends Component {
       messageList: [
       ],
       isOpen: false,
-      newMessagesCount:  0
+      newMessagesCount:  0,
+      isGreeted: false
     };
     SessionActions.getChatMessageList();
     this.changeHandler = this.changeHandler.bind(this);
@@ -27,7 +28,7 @@ export default class Chat extends Component {
 
   
 
-  componentDidMount() {ChatStore.addChangeListener(this.changeHandler);}
+  componentDidMount() { ChatStore.addChangeListener(this.changeHandler);}
   componentWillUnmount() {ChatStore.removeChangeListener(this.changeHandler);
     }
 
@@ -85,6 +86,17 @@ export default class Chat extends Component {
       newMessagesCount = 0;
     } else {
       newMessagesCount = ChatStore.getNewMessagesCount();
+    }
+    if (!this.state.isGreeted) {
+      messageList.push({
+        author: "bot",
+        data : {
+            date: new Date(),
+            text: "Hi there, I'm your search assistant. Talk to me by prefix your message with '@bot'"
+        },
+        sender: AccountStore.getSessionId,
+        type: "text",
+      });
     }
     // update the React compnent and cause reendering of the component
     this.setState({

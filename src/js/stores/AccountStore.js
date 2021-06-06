@@ -20,9 +20,6 @@ const AccountStore = Object.assign(EventEmitter.prototype, {
     getUserType() {
         return state.userType;
     },
-    getBotId() {
-        return state.botId;
-    },
     getSessionId() {
         return state.sessionId;
     },

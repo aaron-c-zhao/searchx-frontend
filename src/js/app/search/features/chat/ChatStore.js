@@ -5,6 +5,7 @@ import {register} from '../../../../utils/Dispatcher';
 import ActionTypes from '../../../../actions/ActionTypes';
 import AccountStore from '../../../../stores/AccountStore';
 import SyncStore from '../../../../stores/SyncStore';
+import SearchActions from '../../../../actions/SearchActions';
 
 const CHANGE_EVENT = 'change_chat';
 
@@ -89,7 +90,7 @@ const _get_chat_message_list = () => {
 const _set_author = (message) => {
     if (message.sender === AccountStore.getUserId()) {
         message.author = "me";
-    } else if (message.sender === AccountStore.getBotId()) {
+    } else if (message.sender === AccountStore.getSessionId()) {
         message.author = "bot";
     } else {
         message.author = "them";
@@ -142,6 +143,13 @@ const _handle_bot_reply = function(err, res) {
             else {
                 let reply = res.body.results;
                 if (reply !== null) {
+                    //TODO: for now only the user who clicked on the confirm message can see the result
+                    // extend this to let all users see the result
+                    if (reply.type === "result") {
+                        SearchActions.search(reply.data.text, "web", 1);
+                        reply.type = "text";
+                        reply.data.text = "Okay!"
+                    }
                     state.messageList.push(reply);
                     ChatStore.emitChange();
                     _broadcast_change();

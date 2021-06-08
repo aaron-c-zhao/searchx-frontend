@@ -14,7 +14,8 @@ const CHANGE_EVENT = 'change_chat';
 let state = {
     messageList: [],
     messageCount: 0,
-    newMessagesCount: 0
+    newMessagesCount: 0,
+    isGreetedByBot: false
 };
 
 ////
@@ -79,6 +80,24 @@ const _get_chat_message_list = () => {
                 state.messageList = [];
             } else {
                 state.messageList = res.body.results.messageList.map((message) => _set_author(message))
+
+                /// 
+                // Add instruction message on to the top of the message list such that each time the 
+                // user is reconnected to the backend, it will display this message.
+                if (!state.isGreetedByBot) {
+                    state.messageList.push({
+                        author: "bot",
+                        data: {
+                            date: new Date(),
+                            text: "Hi, I'm your search assistant. Prefix your message with '@bot' to talk to me!"
+                        },
+                        sender: AccountStore.getSessionId,
+                        type: "text"
+                    })
+                    state.isGreetedByBot = true;
+                }
+                /// 
+
                 state.messageCount = state.messageList.length;
             }
             ChatStore.emitChange();

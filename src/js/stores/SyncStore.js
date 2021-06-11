@@ -5,6 +5,7 @@ import AccountStore from "./AccountStore";
 import SessionActions from "../actions/SessionActions";
 import SearchStore from "../app/search/SearchStore";
 import Helpers from "../utils/Helpers";
+import SearchActions from '../actions/SearchActions';
 
 const socket = io(process.env.REACT_APP_SERVER_URL + '/session');
 
@@ -114,6 +115,13 @@ const SyncStore = Object.assign(EventEmitter.prototype, {
         socket.emit('pushChatUpdate', {
             groupId: AccountStore.getGroupId()
         });
+    },
+
+    emitBotResult(result) {
+        socket.emit('pushBotResult', {
+            groupId: AccountStore.getGroupId(),
+            result: result
+        });
     }
 
 });
@@ -152,6 +160,11 @@ socket.on('pageMetadataUpdate', (data) => {
 
 socket.on('chatUpdate', (data) => {
     SessionActions.getChatMessageList();
+});
+
+socket.on('botResult', (data) => {
+    console.log("search action: " + data);
+    SearchActions.search(data, 'web', 1);
 });
 
 export default SyncStore;

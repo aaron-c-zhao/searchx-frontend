@@ -84,6 +84,7 @@ const _get_chat_message_list = () => {
                 /// 
                 // Add instruction message on to the top of the message list such that each time the 
                 // user is reconnected to the backend, it will display this message.
+                // Note that this message wont be saved into the database
                 if (!state.isGreetedByBot) {
                     state.messageList.push({
                         author: "bot",
@@ -161,10 +162,9 @@ const _handle_bot_reply = function(err, res) {
             else {
                 let reply = res.body.results;
                 if (reply !== null) {
-                    //TODO: for now only the user who clicked on the confirm message can see the result
-                    // extend this to let all users see the result
                     if (reply.type === "result") {
-                        SearchActions.search(reply.data.text, "web", 1);
+                         SearchActions.search(reply.data.text, "web", 1);
+                        _broadcast_result(reply.data.text);
                         reply.type = "text";
                         reply.data.text = "Okay!"
                     }
@@ -179,6 +179,9 @@ const _broadcast_change = function() {
     SyncStore.emitChatUpdate(ChatStore.getChatMessageList());
 };
 
+const _broadcast_result = function(res) {
+    SyncStore.emitBotResult(res);
+}
 const _notify_bot = function() {
     request
         .post(`${process.env.REACT_APP_SERVER_URL}/v1/session/${AccountStore.getGroupId()}/chatbot`)

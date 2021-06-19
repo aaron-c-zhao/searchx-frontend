@@ -7,6 +7,7 @@ import AccountStore from "../../../../stores/AccountStore";
 import {log} from '../../../../utils/Logger';
 import {LoggerEventTypes} from '../../../../utils/LoggerEventTypes';
 import config from '../../../../config';
+import SearchActions from '../../../../actions/SearchActions';
 
 export default class Chat extends Component {
 
@@ -75,6 +76,10 @@ export default class Chat extends Component {
   _confirmNo() {
     SessionActions.sendConfirmMessage(false);
   }
+
+  _openBotUrl(url, doctext) {
+    SearchActions.openUrl(url, doctext);
+  }
  
   changeHandler() {
     // fetch the message list from the local storage
@@ -109,6 +114,7 @@ export default class Chat extends Component {
         onMessageWasSent={this._onMessageWasSent.bind(this)}
         confirmYes={this._confirmYes.bind(this)}
         confirmNo={this._confirmNo.bind(this)}
+        openUrl={this._openBotUrl.bind(this)}
         messageList={this.state.messageList}
         newMessagesCount={this.state.newMessagesCount}
         showEmoji

@@ -18,6 +18,8 @@ let state = {
     isGreetedByBot: false
 };
 
+
+
 ////
 
 const ChatStore = Object.assign(EventEmitter.prototype, {
@@ -161,13 +163,8 @@ const _handle_bot_reply = function(err, res) {
             }
             else {
                 let reply = res.body.results;
+                console.log(reply);
                 if (reply !== null) {
-                    if (reply.type === "result") {
-                         SearchActions.search(reply.data.text, "web", 1);
-                        _broadcast_result(reply.data.text);
-                        reply.type = "text";
-                        reply.data.text = "Okay!"
-                    }
                     state.messageList.push(reply);
                     ChatStore.emitChange();
                     _broadcast_change();
@@ -179,9 +176,6 @@ const _broadcast_change = function() {
     SyncStore.emitChatUpdate(ChatStore.getChatMessageList());
 };
 
-const _broadcast_result = function(res) {
-    SyncStore.emitBotResult(res);
-}
 const _notify_bot = function() {
     request
         .post(`${process.env.REACT_APP_SERVER_URL}/v1/session/${AccountStore.getGroupId()}/chatbot`)

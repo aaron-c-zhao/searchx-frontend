@@ -163,8 +163,12 @@ const _handle_bot_reply = function(err, res) {
             }
             else {
                 let reply = res.body.results;
-                console.log(reply);
+                console.log("bot reply:" + reply);
                 if (reply !== null) {
+                    console.log(reply.sender)
+                    if (!reply.sender) {
+                        reply.sender = AccountStore.getGroupId;
+                    }
                     state.messageList.push(reply);
                     ChatStore.emitChange();
                     _broadcast_change();
